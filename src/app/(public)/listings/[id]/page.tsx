@@ -14,11 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice, formatDate, formatTimeAgo, getPublishCountdown, isNewListing, categoryLabel } from "@/lib/utils";
 import Navbar from "@/components/layout/Navbar";
-import dynamic from "next/dynamic";
 import type { ListingWithBroker } from "@/types";
-
-// Must be dynamic/no-SSR — Leaflet requires browser APIs
-const LocationMap = dynamic(() => import("@/components/ui/LocationMap"), { ssr: false });
 
 export default function ListingDetailPage({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
@@ -149,10 +145,6 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
             <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">{listing.description}</p>
           </div>
 
-          {/* Location map */}
-          <div className="rounded-xl border overflow-hidden h-64">
-            <LocationMap location={listing.location} />
-          </div>
         </div>
 
         {/* RIGHT: Price, broker, CTA */}
