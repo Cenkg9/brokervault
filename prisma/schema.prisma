@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MEMBER
+  VIP
+  OWNER
+}
+
+enum ListingStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+}
+
+enum Category {
+  REAL_ESTATE
+  LUXURY_CARS
+  YACHTS
+  OTHER
+}
+
+model User {
+  id                  String    @id @default(cuid())
+  name                String
+  email               String    @unique
+  passwordHash        String
+  role                Role      @default(MEMBER)
+  country             String?
+  phone               String?
+  avatar              String?
+  emailVerified       Boolean   @default(false)
+  emailVerifyToken    String?   @unique
+  emailVerifyExpires  DateTime?
+  createdAt           DateTime  @default(now())
+  suspendedAt         DateTime?
+  lastActiveAt        DateTime  @default(now())
+
+  listings       Listing[]      @relation("UserListings")
+  savedListings  SavedListing[]
+  conversationsA Conversation[] @relation("ParticipantA")
+  conversationsB Conversation[] @relation("ParticipantB")
+  sentMessages   Message[]
+
+  @@map("users")
+}
+
+model Listing {
+  id            String        @id @default(cuid())
+  title         String
+  description   String
+  category      Category
+  price         Float
+  location      String
+  photos        String[]
+  status        ListingStatus @default(PENDING)
+  submittedAt   DateTime      @default(now())
+  publishAt     DateTime
+  publishedAt   DateTime?
+
+  submittedBy    User          @relation("UserListings", fields: [submittedById], references: [id])
+  submittedById  String
+
+  savedBy        SavedListing[]
+  conversations  Conversation[]
+
+  @@map("listings")
+}
+
+model SavedListing {
+  userId    String
+  listingId String
+  savedAt   DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@id([userId, listingId])
+  @@map("saved_listings")
+}
+
+model Conversation {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  lastMessageAt DateTime @default(now())
+
+  listing        Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId      String
+
+  participantA   User   @relation("ParticipantA", fields: [participantAId], references: [id])
+  participantAId String
+
+  participantB   User   @relation("ParticipantB", fields: [participantBId], references: [id])
+  participantBId String
+
+  messages Message[]
+
+  @@unique([listingId, participantAId, participantBId])
+  @@map("conversations")
+}
+
+model Message {
+  id     String    @id @default(cuid())
+  body   String
+  sentAt DateTime  @default(now())
+  readAt DateTime?
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+
+  sender   User   @relation(fields: [senderId], references: [id])
+  senderId String
+
+  @@map("messages")
+}
+
+model PlatformSettings {
+  key   String @id
+  value String
+
+  @@map("platform_settings")
+}

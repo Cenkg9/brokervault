@@ -1,0 +1,82 @@
+"use client";
+
+import { AnimatedWave } from "./animated-wave";
+
+const footerLinks = {
+  Platform: [
+    { name: "Features", href: "#features" },
+    { name: "How it works", href: "#how-it-works" },
+    { name: "Pricing", href: "#pricing" },
+    { name: "Asset classes", href: "#integrations" },
+  ],
+  Access: [
+    { name: "Join Now", href: "/signup" },
+    { name: "Sign In", href: "/login" },
+    { name: "Member Portal", href: "/feed" },
+    { name: "Owner Panel", href: "/owner-dashboard" },
+  ],
+  Legal: [
+    { name: "Privacy Policy", href: "#" },
+    { name: "Terms of Service", href: "#" },
+    { name: "Cookie Policy", href: "#" },
+  ],
+};
+
+export function FooterSection() {
+  return (
+    <footer className="relative border-t border-foreground/10">
+      {/* Animated wave background */}
+      <div className="absolute inset-0 h-64 opacity-20 pointer-events-none overflow-hidden">
+        <AnimatedWave />
+      </div>
+
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
+        {/* Main Footer */}
+        <div className="py-16 lg:py-24">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-10 md:gap-8">
+            {/* Brand Column */}
+            <div className="col-span-1 sm:col-span-2">
+              <a href="#" className="inline-flex items-center gap-2 mb-6">
+                <span className="text-2xl font-display">The Fischer Group</span>
+              </a>
+
+              <p className="text-muted-foreground leading-relaxed mb-8 max-w-xs">
+                The private listing network for real estate and luxury goods brokers worldwide.
+              </p>
+            </div>
+
+            {/* Link Columns */}
+            {Object.entries(footerLinks).map(([title, links]) => (
+              <div key={title}>
+                <h3 className="text-sm font-medium mb-6">{title}</h3>
+                <ul className="space-y-4">
+                  {links.map((link) => (
+                    <li key={link.name}>
+                      <a
+                        href={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {link.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="py-8 border-t border-foreground/10 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground">
+            © 2025 The Fischer Group. All rights reserved.
+          </p>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span className="w-2 h-2 rounded-full bg-green-500" />
+            Vault secured & operational
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
