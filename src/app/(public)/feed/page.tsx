@@ -41,6 +41,7 @@ function FeedPage() {
     if (f.location) params.set("location", f.location);
     if (f.sortBy) params.set("sortBy", f.sortBy);
     if (f.search) params.set("search", f.search);
+    if (f.status) params.set("status", f.status);
     params.set("page", String(p));
 
     try {
@@ -93,7 +94,7 @@ function FeedPage() {
       <main className="mx-auto max-w-[1600px] px-4 lg:px-6 py-6">
         <div className="flex gap-6">
           {/* Persistent sidebar filters */}
-          <ListingFilters filters={filters} onChange={handleFilter} />
+          <ListingFilters filters={filters} onChange={handleFilter} role={role} />
 
           {/* Feed */}
           <div className="flex-1 min-w-0">

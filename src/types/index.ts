@@ -37,4 +37,5 @@ export interface FilterState {
   location?: string;
   sortBy?: "newest" | "oldest" | "price_asc" | "price_desc";
   search?: string;
+  status?: "all" | "active" | "pending";
 }

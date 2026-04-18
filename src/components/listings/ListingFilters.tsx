@@ -17,6 +17,7 @@ const SORT_OPTIONS = [
 interface Props {
   filters: FilterState;
   onChange: (filters: FilterState) => void;
+  role?: string;
 }
 
 function formatNum(val: string) {
@@ -28,7 +29,7 @@ function parseNum(val: string) {
   return raw ? Number(raw) : undefined;
 }
 
-export default function ListingFilters({ filters, onChange }: Props) {
+export default function ListingFilters({ filters, onChange, role }: Props) {
   const [minInput, setMinInput] = useState(filters.minPrice ? filters.minPrice.toLocaleString("en-US") : "");
   const [maxInput, setMaxInput] = useState(filters.maxPrice ? filters.maxPrice.toLocaleString("en-US") : "");
   const [locationInput, setLocationInput] = useState(filters.location ?? "");
@@ -63,6 +64,7 @@ export default function ListingFilters({ filters, onChange }: Props) {
     filters.minPrice || filters.maxPrice,
     filters.location,
     filters.sortBy && filters.sortBy !== "newest",
+    filters.status,
   ].filter(Boolean).length;
 
   return (
@@ -190,6 +192,36 @@ export default function ListingFilters({ filters, onChange }: Props) {
         </div>
 
         <div className="h-px bg-border" />
+
+        {/* Status — VIP/OWNER only */}
+        {(role === "VIP" || role === "OWNER") && (
+          <>
+            <div>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Status</p>
+              <div className="space-y-0.5">
+                {[
+                  { value: "all", label: "All listings" },
+                  { value: "active", label: "Active only" },
+                  { value: "pending", label: "Coming soon" },
+                ].map((o) => (
+                  <button
+                    key={o.value}
+                    onClick={() => update({ status: o.value === "all" ? undefined : o.value as FilterState["status"] })}
+                    className={cn(
+                      "w-full text-left px-3 py-2 rounded-md text-sm transition-colors",
+                      (!filters.status && o.value === "all") || filters.status === o.value
+                        ? "bg-primary text-primary-foreground font-medium"
+                        : "hover:bg-accent text-foreground"
+                    )}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="h-px bg-border" />
+          </>
+        )}
 
         {/* Sort */}
         <div>

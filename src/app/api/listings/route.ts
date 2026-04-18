@@ -35,9 +35,17 @@ export async function GET(req: Request) {
   const location = searchParams.get("location") || undefined;
   const search = searchParams.get("search") || undefined;
   const sortBy = searchParams.get("sortBy") || "newest";
+  const statusParam = searchParams.get("status") || undefined;
+
+  // Allow VIP/OWNER to further filter by status
+  let resolvedStatus = statusFilter;
+  if (statusParam && (role === "VIP" || role === "OWNER")) {
+    if (statusParam === "active") resolvedStatus = "ACTIVE";
+    else if (statusParam === "pending") resolvedStatus = "PENDING";
+  }
 
   const where: any = {
-    status: statusFilter,
+    status: resolvedStatus,
     ...(category && { category }),
     ...(location && { location: { contains: location, mode: "insensitive" } }),
     ...(search && { OR: [
