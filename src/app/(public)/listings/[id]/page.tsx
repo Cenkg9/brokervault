@@ -14,7 +14,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice, formatDate, formatTimeAgo, getPublishCountdown, isNewListing, categoryLabel } from "@/lib/utils";
 import Navbar from "@/components/layout/Navbar";
+import dynamic from "next/dynamic";
 import type { ListingWithBroker } from "@/types";
+
+const LocationMap = dynamic(() => import("@/components/ui/LocationMap"), { ssr: false });
 
 export default function ListingDetailPage({ params }: { params: { id: string } }) {
   const { data: session } = useSession();
@@ -27,7 +30,6 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
   const [photoIndex, setPhotoIndex] = useState(0);
   const [saved, setSaved] = useState(false);
   const [startingChat, setStartingChat] = useState(false);
-  const [mapCoords, setMapCoords] = useState<{ lat: number; lon: number } | null>(null);
 
   useEffect(() => {
     if (!session) return;
@@ -40,20 +42,6 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
       .catch(() => setError("Listing not found"))
       .finally(() => setLoading(false));
   }, [params.id, session]);
-
-  // Geocode location for map
-  useEffect(() => {
-    if (!listing?.location) return;
-    fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(listing.location)}&format=json&limit=1`,
-      { headers: { "User-Agent": "TheFischerGroup/1.0" } }
-    )
-      .then((r) => r.json())
-      .then((data) => {
-        if (data[0]) setMapCoords({ lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) });
-      })
-      .catch(() => {});
-  }, [listing?.location]);
 
   const toggleSave = async () => {
     if (!listing) return;
@@ -162,29 +150,8 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
 
           {/* Location map */}
           <div className="rounded-xl border overflow-hidden h-64">
-            {mapCoords ? (
-              <iframe
-                title="Location map"
-                src={`https://www.openstreetmap.org/export/embed.html?bbox=${mapCoords.lon - 0.04},${mapCoords.lat - 0.04},${mapCoords.lon + 0.04},${mapCoords.lat + 0.04}&layer=mapnik&marker=${mapCoords.lat},${mapCoords.lon}`}
-                className="w-full h-full border-0"
-                loading="lazy"
-              />
-            ) : (
-              <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground text-sm gap-1.5 animate-pulse">
-                <MapPin className="h-4 w-4" /> {listing.location}
-              </div>
-            )}
+            <LocationMap location={listing.location} />
           </div>
-          {mapCoords && (
-            <a
-              href={`https://www.openstreetmap.org/?mlat=${mapCoords.lat}&mlon=${mapCoords.lon}#map=13/${mapCoords.lat}/${mapCoords.lon}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground -mt-3"
-            >
-              <MapPin className="h-3 w-3" /> Open in OpenStreetMap ↗
-            </a>
-          )}
         </div>
 
         {/* RIGHT: Price, broker, CTA */}
