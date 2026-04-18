@@ -68,7 +68,7 @@ export default function ListingFilters({ filters, onChange, role }: Props) {
   ].filter(Boolean).length;
 
   return (
-    <aside className="w-56 shrink-0 hidden lg:flex flex-col py-6 overflow-y-auto">
+    <aside className="w-56 shrink-0 hidden lg:flex flex-col py-6 overflow-y-auto select-none">
       <div className="rounded-lg border bg-card p-4 space-y-5">
 
         {/* Header */}
