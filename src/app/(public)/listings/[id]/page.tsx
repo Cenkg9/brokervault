@@ -17,6 +17,7 @@ import Navbar from "@/components/layout/Navbar";
 import dynamic from "next/dynamic";
 import type { ListingWithBroker } from "@/types";
 
+// Must be dynamic/no-SSR — Leaflet requires browser APIs
 const LocationMap = dynamic(() => import("@/components/ui/LocationMap"), { ssr: false });
 
 export default function ListingDetailPage({ params }: { params: { id: string } }) {
