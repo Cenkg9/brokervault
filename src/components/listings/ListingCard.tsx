@@ -30,11 +30,11 @@ export default function ListingCard({ listing, role }: Props) {
   const photo = listing.photos?.[0];
 
   return (
-    <Link href={`/listings/${listing.id}`} className={cn("group block rounded-lg border bg-card overflow-hidden hover:shadow-md transition-shadow", isPending && "opacity-90")}>
+    <Link href={`/listings/${listing.id}`} className={cn("group block rounded-lg border bg-card overflow-hidden hover:shadow-md transition-shadow select-none", isPending && "opacity-90")}>
       {/* Photo */}
       <div className="relative aspect-[4/3] bg-muted overflow-hidden">
         {photo ? (
-          <Image src={photo} alt={listing.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
+          <Image src={photo} alt={listing.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized draggable={false} />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-4xl">🏛️</div>
         )}
